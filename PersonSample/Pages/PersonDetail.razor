@@ -1,0 +1,56 @@
+﻿@page "/person/{Id:int}"
+@page "/person"
+@inject IPersonApiService PersonApiService
+@inject NavigationManager NavigationManager 
+
+<h1>@Title</h1>
+
+<form novalidate>
+    <img src="@Person.ImageUrl" style="width: 150px; height: 150px;" />
+
+    <div class="form-group">
+        <label>Image</label> 
+        <input type="text" value="@Person.ImageUrl" 
+           @oninput="e => Person.ImageUrl = e.Value.ToString()"/>
+    </div>    
+
+    <!-- Die FormGroup-Komponente wrapped das div + label: -->
+    <FormGroup Label="First Name">
+        <input type="text" 
+               value="@Person.FirstName"
+               @oninput="e => Person.FirstName = e.Value.ToString()" />
+    </FormGroup>
+
+    <FormGroup Label="Last Name">
+        <input type="text" @bind-value="Person.LastName" />
+    </FormGroup>
+</form>
+
+<button class="btn btn-primary mt-4"
+        @onclick="Save">Save</button>
+
+@code {
+    [Parameter] public int Id { get; set; }
+    public PersonDto Person { get; set; }
+    public string Title { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (Id != 0)
+        {
+            Person = await PersonApiService.GetById(Id);
+            Title = "Edit Person";
+        }
+        else
+        {
+            Person = new PersonDto();
+            Title = "New Person";
+        }
+    }
+
+    public async Task Save()
+    {
+        await PersonApiService.Save(Person);
+        NavigationManager.NavigateTo("/");
+    }
+}

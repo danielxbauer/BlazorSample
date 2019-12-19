@@ -1,0 +1,26 @@
+﻿@page "/"
+@inject IPersonApiService PersonApiService
+@inject NavigationManager NavigationManager
+
+<AppList Items="Persons" OnSelect="OnSelect" Context="p">
+    @p.FirstName  @p.LastName
+</AppList>
+
+<a class="btn btn-primary mt-4" href="/person">New</a>
+
+@code {
+    public IEnumerable<PersonDto> Persons { get; set; }
+    public IEnumerable<string> Names
+        => Persons.Select(p => $"{p.FirstName} {p.LastName}");
+
+    protected override async Task OnInitializedAsync()
+    {
+        Persons = await PersonApiService.GetAll();
+    }
+
+    public void OnSelect(PersonDto person)
+    {
+        Console.WriteLine(person);
+        NavigationManager.NavigateTo($"person/{person.Id}");
+    }
+}

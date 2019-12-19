@@ -1,0 +1,17 @@
+﻿@typeparam T
+
+<div class="list-group">
+    @foreach (var item in Items)
+    {
+        <a class="list-group-item list-group-item-action"
+            @onclick="_ => OnSelect(item)">
+            @ChildContent(item)
+        </a>
+    }
+</div>
+
+@code {
+    [Parameter] public IEnumerable<T> Items { get; set; }
+    [Parameter] public Action<T> OnSelect { get; set; }
+    [Parameter] public RenderFragment<T> ChildContent { get; set; }
+}
